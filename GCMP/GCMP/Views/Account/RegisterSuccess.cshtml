@@ -1,0 +1,107 @@
+﻿<<<<<<< .mine@model GCMP.ViewModels.AccountViewModel.LoginViewModel
+
+@{
+    ViewBag.Title = "RegisterSuccess";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        countdown(0, 3);
+
+    });
+
+
+    function countdown(minutes, seconds) {
+        // set time for the particular countdown
+        var url = '@ViewBag.returnURL';
+        var time = minutes * 60 + seconds;
+        var interval = setInterval(function () {
+            var el = document.getElementById("second");
+            // if the time is 0 then end the counter
+            if (time == 0) {
+                window.location.href = url;
+            }
+            var minutes = Math.floor(time / 60);
+            if (minutes < 10) minutes = "0" + minutes;
+            var seconds = time % 60;
+            if (seconds < 10) seconds = "0" + seconds;
+            var text = minutes + ':' + seconds;
+            el.innerHTML = text;
+            time--;
+        }, 1000);
+    }
+</script>
+
+<div class="content-section-a">
+    <div class="col-lg-offset-2 col-lg-7" style="margin-bottom: 50px;">
+        <div class="row">
+            <h2>Đăng ký thành công</h2>
+
+            <h4>Chúc mừng @Model.UserName đã đăng ký thành công và trở thành thành viên của Chợ Giff cards</h4>
+            <h5>Trans web sẽ tự động chuyển về trang trước sau
+                <span id="second"></span>
+                giây
+            </h5>
+
+            <a href="@Url.Action("Authentication", "Account", new { account = @Model, returnUrl = @ViewBag.returnURL })">Click vào đây để đăng nhập
+            </a>
+        </div>
+    </div>
+    <hr/>
+</div>
+
+=======@model GCMP.ViewModels.AccountViewModel.LoginViewModel
+
+@{
+    ViewBag.Title = "RegisterSuccess";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        countdown(0, 3);
+
+    });
+
+
+    function countdown(minutes, seconds) {
+        // set time for the particular countdown
+        var url = '@ViewBag.returnURL';
+        var time = minutes * 60 + seconds;
+        var interval = setInterval(function () {
+            var el = document.getElementById("second");
+            // if the time is 0 then end the counter
+            if (time == 0) {
+                window.location.href = url;
+            }
+            var minutes = Math.floor(time / 60);
+            if (minutes < 10) minutes = "0" + minutes;
+            var seconds = time % 60;
+            if (seconds < 10) seconds = "0" + seconds;
+            var text = minutes + ':' + seconds;
+            el.innerHTML = text;
+            time--;
+        }, 1000);
+    }
+</script>
+
+<div class="content-section-a">
+    <div class="col-lg-offset-2 col-lg-7" style="margin-bottom: 50px;">
+        <div class="row">
+            <h2>Đăng ký thành công</h2>
+
+            <h4>Chúc mừng @Model.UserName đã đăng ký thành công và trở thành thành viên của Chợ Giff cards</h4>
+            <h5>Trans web sẽ tự động chuyển về trang trước sau
+                <span id="second"></span>
+                giây
+            </h5>
+
+            <a href="@Url.Action("Authentication", "Account", new { account = @Model, returnUrl = @ViewBag.returnURL })">Click vào đây để đăng nhập
+            </a>
+        </div>
+    </div>
+    <hr/>
+</div>
+
+>>>>>>> .theirs

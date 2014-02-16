@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="" content="">
+
+    <!-- Le styles -->
+    @Styles.Render("~/Content/css/home")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Scripts/toastr")
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    @RenderSection("scripts", required: false)
+    <link href="~/Content/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/Content/css/clippy.css" media="all">
+</head>
+<body>
+
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/home">Trang chủ</a>
+
+                @{Html.RenderAction("CategoriesMenu", "Home");}
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>
+                            <a href="">@User.Identity.Name
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="@Url.Action("LogOff", "Account", new { username = @User.Identity.Name })">Thoát
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">Thông báo</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="" data-toggle="modal" data-target="#loginModal">Đăng nhập/ Đăng ký
+                            </a>
+                        </li>
+                    }
+                    <li>
+                        <a href="#">Giỏ hàng</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    @*<div id="news" class="sidebar left invis" style="display: block;">
+        <div class="row iconshow" data-nav="left"><i class="glyphicon glyphicon-chevron-right"></i></div>
+        <br />
+        <div class="row" style="text-align: left"></div>
+
+
+    </div>
+    <div id="feeds" class="sidebar right invis" style="display: block;">
+        <div class="row iconshow" data-nav="right"><i class="glyphicon glyphicon-chevron-left"></i></div>
+        <br />
+        <div class="row" style="text-align: right"></div>
+    </div>*@
+
+    @RenderBody()
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="#home">Trang chủ</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;
+                        </li>
+                        <li>
+                            <a href="#about">Thông tin</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;
+                        </li>
+                        <li>
+                            <a href="#services">Dịch vụ</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;
+                        </li>
+                        <li>
+                            <a href="#contact">Liên hệ</a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted small">
+                        Copyright &copy; GCMP 2014. All Rights Reserved
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    @if (!Request.IsAuthenticated)
+    {
+        <!-- login container -->
+        <div class="modal fade small" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 900px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Đăng nhập</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 ">
+                                @{ Html.RenderAction("Authentication", "Account"); }
+                            </div>
+                            <div class="col-lg-6 ">
+                                Đăng nhập bằng:
+                            
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+    <!-- JavaScript -->
+    <!-- ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <!-- Clippy.js -->
+    <script src="~/Scripts/Animation/clippy.js"></script>
+
+    <!-- Init script -->
+    <script type="text/javascript">
+
+        //clippy.load('Rover', function (agent) {
+        //    // do anything with the loaded agent
+        //    animation = agent;
+        //    animation.show();
+        //});
+
+        //var animation;
+
+    </script>
+    <script>
+        
+
+    </script>
+
+</body>
+
+</html>

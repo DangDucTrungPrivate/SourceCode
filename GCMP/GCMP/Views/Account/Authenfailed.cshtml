@@ -1,0 +1,174 @@
+﻿@{
+    ViewBag.Title = "Loginfailed";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#UserName").change(function () {
+            var username = $("#UserName").val();
+            if (validEmail(username)) {
+                var checkReg = $("#ctrl_not_registered").is(":checked");
+                if (checkReg) {
+                    $.post("/Account/CheckExistUser", { "username": username },
+                              function (data) {
+                                  if (data == false) {
+                                      toastr.success('Account này có thể sử dụng')
+                                  } else {
+                                      toastr.error("Account này đã được đăng ký!");
+                                      $("#UserName").val("");
+                                      $("#UserName").attr("placeholder", username);
+                                  }
+                              });
+                }
+            } else {
+                toastr.error("Xin nhập đúng định dạng email!");
+                $("#UserName").val("");
+                $("#UserName").attr("placeholder", username);
+            }
+
+
+        });
+        $("#ctrl_not_registered") // select the radio by its id
+    .change(function () { // bind a function to the change event
+        if ($(this).is(":checked")) { // check if the radio is checked
+            var val = $(this).val(); // retrieve the value
+            $("#loginbutton").attr("value", "Đăng ký");
+            var username = $("#UserName").val();
+            if (username != "") {
+                if (validEmail(username)) {
+                    $.post("/Account/CheckExistUser", { "username": username },
+                        function (data) {
+                            if (data == false) {
+                                toastr.success('Account này có thể sử dụng')
+                            } else {
+                                toastr.error("Account này đã được đăng ký!");
+                                $("#UserName").val("");
+                                $("#UserName").attr("placeholder", username);
+                            }
+                        });
+                } else {
+                    toastr.error("Xin nhập đúng định dạng email!");
+                    $("#UserName").val("");
+                    $("#UserName").attr("placeholder", username);
+                }
+            } else {
+                toastr.warning("Xin vui lòng nhập email đăng ký!")
+            }
+        }
+    });
+
+        $("#ctrl_registered") // select the radio by its id
+    .change(function () { // bind a function to the change event
+        if ($(this).is(":checked")) { // check if the radio is checked
+            var val = $(this).val(); // retrieve the value
+            $("#loginbutton").attr("value", "Đăng ký");
+            var username = $("#UserName").val();
+            if (username != "") {
+                if (validEmail(username)) {
+                } else {
+                    toastr.error("Xin nhập đúng định dạng email!");
+                    $("#UserName").val("");
+                    $("#UserName").attr("placeholder", username);
+                }
+            } else {
+                toastr.warning("Xin vui lòng nhập email đăng ký!")
+            }
+        }
+    });
+
+
+
+    });
+
+    function validEmail(email) {
+
+        var filter = /^[a-zA-Z0-9_.-]+@@[a-zA-Z0-9]+[a-zA-Z0-9.-]+[a-zA-Z0-9]+.[a-z]{0,4}$/;
+
+        var validUsername = email.match(filter);
+        if (validUsername == null) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+
+
+<div class="content-section-a">
+    <div class="col-lg-offset-2 col-lg-7">
+        <div class="row">
+            <div class="col-lg-8">
+                <h3 class="danger">@ViewBag.returnMessage</h3>
+                <br />
+
+                @using (Html.BeginForm("Authentication", "Account", new { returnUrl = ViewBag.ReturnUrl },
+            FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+    
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true)
+
+                        <div class="form-group">
+                            @Html.Label("Email(*)", new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                <input type="text" id="UserName" class="form-control" name="UserName" placeholder="Email đăng nhập" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Bạn đã có tài khoản", new { @class = "control-label col-md-5" })
+                            <div class="col-md-7">
+                                <ul>
+                                    <li>
+                                        <label for="ctrl_not_registered">
+                                            <input type="radio" name="Register" value="False" id="ctrl_not_registered" tabindex="105">
+                                            Tích vào đây để đăng ký</label></li>
+                                    <li>
+                                        <label for="ctrl_registered">
+                                            <input type="radio" name="Register" value="True" id="ctrl_registered" tabindex="105" checked="checked" class="Disabler">
+                                            Vâng, Mật khẩu của tôi là:</label></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Mật khẩu", new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                <input type="password" id="Password" class="form-control" name="Password" placeholder="mật khẩu" />
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <a href="#" class=" pull-right" tabindex="106">Bạn đã quên mật khẩu?</a>
+                                </div>
+                                <div class="col-lg-offset-4 col-md-4">
+                                    <input id="loginbutton" type="submit" value="Đăng nhập" class="btn-success btn-lg btn-block text-center" />
+                                </div>
+                                <div class="col-lg-offset-3 col-md-6">
+                                    <input id="RememberMe" type="checkbox" name="RememberMe" value="True" tabindex="103">
+                                    Duy trì trạng thái đăng nhập
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="pull-right">
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <div class="col-lg-4"></div>
+        </div>
+
+
+    </div>
+</div>

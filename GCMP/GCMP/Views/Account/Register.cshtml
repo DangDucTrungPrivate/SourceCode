@@ -1,0 +1,283 @@
+﻿@model GCMP.ViewModels.AccountViewModel.AccountRegisterViewModel
+
+<script type="text/javascript">
+    var isFirstLoad = true;
+    
+
+    function UploadImage() {
+        $("#ImgForm").submit();
+    }
+
+    function UploadImage_Complete() {
+        //Check to see if this is the first load of the iFrame
+        if (isFirstLoad == true) {
+            isFirstLoad = false;
+            return;
+        }
+
+        //Reset the image form so the file won't get uploaded again
+        document.getElementById("ImgForm").reset();
+
+        //Grab the content of the textarea we named jsonResult .  This shold be loaded into 
+        //the hidden iFrame.
+        var newImg = $.parseJSON($("#UploadTarget").contents().find("#jsonResult")[0].innerHTML);
+
+        //If there was an error, display it to the user
+        if (newImg.IsValid == false) {
+            alert(newImg.Message);
+            return;
+        }
+
+        //Create a new image and insert it into the Images div.  Just to be fancy, 
+        //we're going to use a "FadeIn" effect from jQuery
+        var imgDiv = document.getElementById("Images");
+        var img = new Image();
+        img.src = newImg.ImagePath;
+        $("#Avatar").val(newImg.ImagePath);
+        
+
+        //Hide the image before adding to the DOM
+        $(img).hide();
+        imgDiv.appendChild(img);
+        //Now fade the image in
+        $(img).fadeIn(500, null);
+    }
+    
+    $(function () {
+
+        $("#Username").change(function () {
+            var username = $("#Username").val();
+                $.post("/Account/CheckExistUser", { "username": username },
+                              function (data) {
+                                  if (data == false) {
+                                      toastr.success('Account này có thể sử dụng')
+                                  } else {
+                                      toastr.error("Account này đã được đăng ký!");
+                                      $("#Username").val("");
+                                      $("#Username").attr("placeholder", username);
+                                  }
+                              });
+           
+        });
+        $("#IdNumber").change(function () {
+            var IDnumber = $("#IdNumber").val();
+            if (validIDCard(IDnumber)) {
+                $.post("/Account/CheckExistIDcard", { "iDcard": IDnumber },
+                              function (data) {
+                                  if (data == false) {
+                                      toastr.success('Số CMND này hợp lệ');
+                                  } else {
+                                      toastr.error("Số CMND này đã được sử dụng cho tài khoản khác");
+                                      $("#IdNumber").val("");
+                                      $("#IdNumber").attr("placeholder", IDnumber);
+                                  }
+                              });
+            } else {
+                toastr.error("Số chứng minh không hợp lệ! CMND có 9 số và chỉ bao gồm từ 0-9");
+                $("#IdNumber").val("");
+                $("#IdNumber").attr("placeholder", IDnumber);
+            }
+        });
+        
+        $("#Email").change(function () {
+            var email = $("#Email").val();
+            if (validEmail(email)) {
+                $.post("/Account/CheckExistEmail", { "email": email },
+                              function (data) {
+                                  if (data == false) {
+                                      toastr.success('Email này có thể sử dụng')
+                                  } else {
+                                      toastr.error("Email này đã được đăng ký!");
+                                      $("#Email").val("");
+                                      $("#Email").attr("placeholder", email);
+                                  }
+                              });
+            } else {
+                toastr.error("Xin nhập đúng định dạng email!");
+                $("#Email").val("");
+                $("#Email").attr("placeholder", username);
+            }
+        });
+
+    });
+
+
+    function validEmail(email) {
+
+        var filter = /^[a-zA-Z0-9_.-]+@@[a-zA-Z0-9]+[a-zA-Z0-9.-]+[a-zA-Z0-9]+.[a-z]{0,4}$/;
+
+        var validUsername = email.match(filter);
+        if (validUsername == null) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function validIDCard(IDCard) {
+        var filter = /^[0-9]{9}$/;
+
+        var validIDcard = IDCard.match(filter);
+        if (validIDcard == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+</script>
+
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog " style="width: 900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title" id="myModalLabel">Đăng ký</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-7 pull-left">
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+    
+                            <div class="form-horizontal">
+                                <h4>Thông tin tài khoản</h4>
+                                <hr />
+                                @Html.ValidationSummary(true)
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Username, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.Username)
+                                        @Html.ValidationMessageFor(model => model.Username)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Password, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.PasswordFor(model => model.Password)
+                                        @Html.ValidationMessageFor(model => model.Password)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ConfirmPass, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.PasswordFor(model => model.ConfirmPass)
+                                        @Html.ValidationMessageFor(model => model.ConfirmPass)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.Email)
+                                        @Html.ValidationMessageFor(model => model.Email)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FirstName, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.FirstName)
+                                        @Html.ValidationMessageFor(model => model.FirstName)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.LastName, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.LastName)
+                                        @Html.ValidationMessageFor(model => model.LastName)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DateOfBirth, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.DateOfBirth)
+                                        @Html.ValidationMessageFor(model => model.DateOfBirth)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Address, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.Address)
+                                        @Html.ValidationMessageFor(model => model.Address)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Phonenumber, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.Phonenumber)
+                                        @Html.ValidationMessageFor(model => model.Phonenumber)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.IdNumber, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.IdNumber)
+                                        @Html.ValidationMessageFor(model => model.IdNumber)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Male, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        <select name="Male">
+                                            <option value="True">Nam</option>
+                                            <option value="False">Nữ</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group hidden">
+                                    @Html.LabelFor(model => model.Avatar, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.Avatar)
+                                        @Html.ValidationMessageFor(model => model.Avatar)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-8">
+                                        <input type="reset" value="Hủy" class="btn btn-danger pull-right" />
+                                        <input type="submit" value="Đăng ký" class="btn btn-success pull-right col-md-push-1" />
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-lg-5 pull-right">
+
+                        @using (Html.BeginForm("UploadImage", "Account", FormMethod.Post,
+    new
+    {
+        enctype = "multipart/form-data",
+        id = "ImgForm",
+        name = "ImgForm",
+        target = "UploadTarget"
+    }))
+                        {
+                            <h3>Chọn avatar</h3>
+                            <input type="file" name="imageFile" />
+                            <p class="help-block">Chọn file hình để upload.</p>
+                            <input type="button" class="btn btn-default" value="Lưu avatar" onclick="UploadImage()" />
+                        }
+                        <iframe id="UploadTarget" name="UploadTarget" onload="UploadImage_Complete();" style="position: absolute; left: -999em; top: -999em;"></iframe>
+                        <hr/>
+                        <div id="Images" style="max-width: 200px; max-height: 160px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

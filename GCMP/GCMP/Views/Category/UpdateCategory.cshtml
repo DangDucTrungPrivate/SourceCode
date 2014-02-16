@@ -1,0 +1,85 @@
+﻿@model GCMP.ViewModels.CategoryViewModel.CategoryViewModel
+
+@{
+    ViewBag.Title = "UpdateCategory";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <div style="padding-top: 100px"></div>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CategoryName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CategoryName)
+                @Html.ValidationMessageFor(model => model.CategoryName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Status, (IEnumerable<SelectListItem>)ViewBag.Status)
+                @Html.ValidationMessageFor(model => model.Status)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" value="Lưu lại" class="btn btn-success pull-left col-md-push-1" onclick="submitForm()" />
+                &nbsp;
+                <input type="button" value="Trở về" class="btn btn-warning pull-left col-md-push-1" onclick="goBack();" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+
+    function submitForm() {
+        var category = $("#CategoryName").val();
+        var categoryViewModel = {
+            CategoryName: $("#CategoryName").val(),
+            Status: $("#Status").val()
+        }
+
+        if (category == null || category == "") {
+            alert("Nhập vào loại hàng");
+        }
+        else {
+            $.ajax({
+                url: '/Category/CheckExistCategories',
+                data: { category: category },
+                type: 'POST',
+                success: function (response) {
+                    if (response == false && category == category) {
+                        $.ajax({
+                            url: '/Category/UpdateCategory',
+                            data: categoryViewModel,
+                            type: 'POST',
+                            dataType: 'Json',
+                            success: function (response) {
+                            }
+                        });
+                        window.location.href = "/Category/";
+                    } else {
+                        alert("Loại hàng này đã có");
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+

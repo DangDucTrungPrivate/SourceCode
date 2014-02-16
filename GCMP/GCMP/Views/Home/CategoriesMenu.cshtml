@@ -1,0 +1,29 @@
+﻿@model IEnumerable<GCMP.ViewModels.CategoryViewModel.CategoryMenuViewModel>
+
+<div class="navbar-brand btn-group" style="float: right">
+    <div data-toggle="dropdown" style="cursor: pointer">
+        Chuyên mục <span class="caret"></span>
+    </div>
+    <ul class="dropdown-menu" role="menu" style="max-height: 500px; overflow-y: scroll">
+        @foreach (var item in Model)
+        {
+            <li><a href="@Url.Action("ViewCateogry","Category", new{id = item.Id})">
+                    <div style="display: inline">
+                        <div style="display: inline">
+                            @if (!string.IsNullOrEmpty(@item.ImangePath))
+                            {
+                                <img class="catimage" src="@item.ImangePath" alt="" height="48" width="48"/>
+                            }
+                            else
+                            {
+                                <img data-src="holder.js/48%x48" alt="..." height="48" width="48"/>
+                            }
+                            
+                        </div>
+                        <div style="display: inline">@item.Name</div>
+                    </div>                    
+
+                </a></li>
+        }
+    </ul>
+</div>
